@@ -4,22 +4,14 @@ import sys
 import click
 import requests
 
-ENV = os.getenv("ENVIRONMENT", 'dev')
-
-# PayPal API base URL
-if ENV == 'prod':
-    PAYPAL_API_BASE = (
-        "https://api.sandbox.paypal.com"
-    )
-else:
-    # Use "https://api.sandbox.paypal.com" for sandbox
-    PAYPAL_API_BASE = (
-        "https://api.sandbox.paypal.com"
-    )
-
-# PayPal API credentials
 CLIENT_ID = os.getenv("PAYPAL_CLIENT_ID")
 PAYPAL_SECRET = os.getenv("PAYPAL_SECRET")
+ENV = os.getenv("ENVIRONMENT", "dev")
+
+if ENV == "prod":
+    PAYPAL_API_BASE = "https://api.sandbox.paypal.com"
+else:
+    PAYPAL_API_BASE = "https://api.sandbox.paypal.com"
 
 if CLIENT_ID is None:
     logging.error("CLIENT_ID is not set")
@@ -147,13 +139,25 @@ print(f"Available webhooks: {WEBHOOK_EVENT_TYPES}")
 list_webhooks()
 
 # Example usage
-# create_webhook("https://api.n3rd-media.com/v1/paypal-order", WEBHOOK_EVENT_TYPES)
+
 
 # delete_webhook('webhook_id_here')
 
-# TODO: Adding click
-# FIXME as this is not working yet
 @click.command()
-@click.option('-l', '--list-webhooks', 'list')
-def paypal_utilities(string):
-    click.echo(string)
+@click.option("-l", "--list-webhooks", "listwebhooks", default=False)
+
+@click.option("-l", "--list-webhooks", "listwebhooks", default=False)
+@click.option("-a", "--add-webhook", "addwebhook", default=False)
+@click.option("-d", "--del-webhook", "delwebhook", default=False)
+
+def paypal_utilities():
+    if listwebhooks:
+        click.echo(list_webhooks())
+    elif addwebhook:
+        click.echo(list_webhooks())
+    elif delwebhook:
+        delete_webhook()
+    else:
+        click.echo('Unknown Argument')
+
+    create_webhook("https://api.n3rd-media.com/v1/paypal-order", WEBHOOK_EVENT_TYPES)
